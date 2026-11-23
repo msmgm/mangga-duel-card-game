@@ -1,7 +1,9 @@
 import { cpSync, existsSync, mkdirSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
 
+const here = fileURLToPath(new URL('.', import.meta.url));
 const outputDir = process.env.MAKEFUN_OUTPUT_DIR || '/output';
 console.log(`[Build] Starting Mangga Duel build to output dir: ${outputDir}`);
 
@@ -9,7 +11,7 @@ console.log(`[Build] Starting Mangga Duel build to output dir: ${outputDir}`);
 mkdirSync(outputDir, { recursive: true });
 
 // Copy game/ directory
-const srcGame = resolve('game');
+const srcGame = join(here, 'game');
 const destGame = join(outputDir, 'game');
 if (!existsSync(srcGame)) {
   console.error(`[Build Error] game/ directory not found at ${srcGame}`);
@@ -32,7 +34,7 @@ const totalGameFiles = countGameFiles(destGame);
 console.log(`[Build Stats] Total game files copied: ${totalGameFiles}`);
 
 // Validate screenshots exist and fail loudly
-const srcScreenshots = resolve('screenshots');
+const srcScreenshots = join(here, 'screenshots');
 const destScreenshots = join(outputDir, 'screenshots');
 if (!existsSync(srcScreenshots)) {
   console.error(`[Build Error] screenshots/ directory not found at ${srcScreenshots}. Screenshots must be captured before final build dossier generation.`);
